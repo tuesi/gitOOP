@@ -107,4 +107,13 @@ public class User {
     public void returnBook(int num){
         books.remove(num);
     }
+
+    void updateDebt(int dayDifference) {
+        for (TakenBook book : books) {
+            TimeSkipper skipper = new TimeSkipper(book.getTakenAt());
+            skipper.setToNow();
+            int thisDiff = skipper.getDayDifference() + dayDifference;
+            this.price += thisDiff * 0.2;
+        }
+    }
 }

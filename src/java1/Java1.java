@@ -4,6 +4,7 @@ package java1;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class Java1 {
 
     public static void main(String[] args) 
     {
-       
+        Date systemTime = new Date();
         List<User> users = readUsers("read.txt");
         List<Book> books = readBooks("books.txt");
         User thisUser = null;
@@ -47,7 +48,7 @@ public class Java1 {
         }
         boolean wantsToExit = false;
         while (!wantsToExit) {
-            System.out.println("1 - add book, 0 - exit, 2 - remove book");
+            System.out.println("1 - add book, 0 - exit, 2 - remove book, 3 - skip time, 4 - show debt");
             Scanner inputScan = new Scanner(System.in);
             String input = inputScan.next();
             
@@ -60,6 +61,12 @@ public class Java1 {
                     break;
                 case"2":
                     returnBook(thisUser);
+                    break;
+                case "3":
+                    skipTime(thisUser, systemTime);
+                    break;
+                case "4":
+                    showDebt(thisUser);
                     break;
                 default:
                     System.out.println("Unrecognized command");
@@ -183,6 +190,34 @@ public class Java1 {
         else {
             user.returnBook(num);
         }
+    }
+
+    private static void skipTime(User thisUser, Date systemTime) {
+        TimeSkipper skipper = new TimeSkipper(systemTime);
+        System.out.println("1 - skip days, 2 - skip weeks, 3 - skip months");
+        Scanner inputScan = new Scanner(System.in);
+        String input = inputScan.next();
+
+        switch (input) {
+            case "1":
+                skipper.skipDays(skipper.getSkipNumber("days"));
+                thisUser.updateDebt(skipper.getDayDifference());
+                break;
+            case"2":
+                skipper.skipWeeks(skipper.getSkipNumber("weeks"));
+                thisUser.updateDebt(skipper.getDayDifference());
+                break;
+            case "3":
+                skipper.skipMonths(skipper.getSkipNumber("moths"));
+                thisUser.updateDebt(skipper.getDayDifference());
+                break;
+            default:
+                System.out.println("Unrecognized command");
+        }
+    }
+
+    private static void showDebt(User thisUser) {
+        System.out.println("Your debt is: " + thisUser.getPrice());
     }
     
 }
