@@ -17,6 +17,7 @@ public class Java1 {
         List<Book> books = readBooks("books.txt");
         User thisUser = null;
         
+        //Looping while correct input is given
         while (thisUser == null) {
             //User name input
             System.out.println("Enter Username");
@@ -28,7 +29,7 @@ public class Java1 {
             Scanner passScan = new Scanner(System.in);
             String pass = passScan.next();
 
-
+            //Loop though User class to compare the imput to existing user
             for (User user : users) {
                 if (user.getUsername().equals(input) && user.getPassword().equals(pass))
                     thisUser = user;
@@ -47,6 +48,7 @@ public class Java1 {
             }
         }
         boolean wantsToExit = false;
+        //When user wants to exit stop the loop and save changed info to the file
         while (!wantsToExit) {
             System.out.println("1 - add book, 0 - exit, 2 - remove book, 3 - skip time, 4 - show debt");
             Scanner inputScan = new Scanner(System.in);
@@ -77,29 +79,10 @@ public class Java1 {
         
     }
     
-    public static String readString(String file)
-    {
-        String text = "";
-        try
-        {
-            Scanner s = new Scanner(new File(file));
-            while(s.hasNextLine())
-            {
-                text = text + s.nextLine();
-            }
-        }
-        catch(FileNotFoundException e)
-        {
-            System.out.println("file not found");
-            
-        }
-        
-        return text;
-    }
-    
+
     public static List<User> readUsers(String file)
     {
-        String text = "";
+        
         try
         {
             List<User> users = new ArrayList<>();
