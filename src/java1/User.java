@@ -6,6 +6,7 @@
 package java1;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class User {
     private boolean isStudent;
     private float price;
     private List<TakenBook> books;
+    private List<TakenRoom> rooms;
+    private Date time;
 
     public String getUsername() {
         return username;
@@ -60,11 +63,21 @@ public class User {
         this.books = books;
     }
     
+    public List<TakenRoom> getRoom()
+    {
+        return rooms;
+    }
+    
+    public void setRooms(List<TakenRoom> rooms)
+    {
+        this.rooms = rooms;
+    }
     
     
     
     public User(String data) {
         books = new ArrayList<>();
+        rooms = new ArrayList<>();
         String[] userData = data.split("!!@!!");
         this.username = userData[0];
         this.password = userData[1];
@@ -79,6 +92,19 @@ public class User {
         for (int i=4;i<userData.length;i+=2) {
             String bookData = userData[i]+"!!@!!"+userData[i+1];
             books.add(new TakenBook(bookData));
+            if(userData[i].equals("room"))
+            {
+                for(int y=i+1;y<userData.length;y+=2)
+                {
+                    String roomData = userData[y]+"!!@!!"+userData[y+1];
+                    rooms.add(new TakenRoom(roomData));
+                    if(userData[y+1].equals("room"))
+                    {
+                        y++;
+                    }
+                }
+                break;
+            }
         }
     }
     
@@ -91,12 +117,23 @@ public class User {
         for (TakenBook book : books) {
             toRet += book.toString();
         }
+        for (TakenRoom room : rooms)
+        {
+            toRet += "!!@!!room";
+            toRet += room.toString();
+        }
         return toRet;
     }
     
     public void getAllBooks() {
         for (TakenBook book : books) {
             System.out.println(book.getIsbn() + ": " + book.getTakenAt());
+        }
+    }
+    
+     public void getAllRooms() {
+        for (TakenRoom room : rooms) {
+            System.out.println(room.getRoomNo() + ": " + room.getTakenUntil());
         }
     }
 
@@ -107,6 +144,20 @@ public class User {
     public void returnBook(int num){
         books.remove(num);
     }
+    
+    
+    public void addRoom(Rooms get, int dayDifference)
+    {
+        this.time = new Date();
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_WEEK, dayDifference);
+        time = c.getTime();
+        
+        get.setStatus("Taken until: ");
+        get.setTakenUntil(time);
+        rooms.add(new TakenRoom(get.getRoomName(), time));
+    }
+    
 
     void updateDebt(int dayDifference) {
         for (TakenBook book : books) {

@@ -45,6 +45,7 @@ public class TakenBook {
     
     public TakenBook(String book) {
         // split string
+        
         String[] data = book.split("!!@!!");
         this.isbn = data[0];
         try {

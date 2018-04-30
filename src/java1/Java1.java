@@ -15,7 +15,14 @@ public class Java1 {
         Date systemTime = new Date();
         List<User> users = readUsers("read.txt");
         List<Book> books = readBooks("books.txt");
+        List<Rooms> rooms = readRooms("rooms.txt");
         User thisUser = null;
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new LibraryGUI().setVisible(true);
+            }
+         });
         
         //Looping while correct input is given
         while (thisUser == null) {
@@ -50,7 +57,7 @@ public class Java1 {
         boolean wantsToExit = false;
         //When user wants to exit stop the loop and save changed info to the file
         while (!wantsToExit) {
-            System.out.println("1 - add book, 0 - exit, 2 - remove book, 3 - skip time, 4 - show debt");
+            System.out.println("1 - add book, 0 - exit, 2 - remove book, 3 - skip time, 4 - show debt, 5 - take room, 6 - show rooms you reserved ");
             Scanner inputScan = new Scanner(System.in);
             String input = inputScan.next();
             
@@ -70,12 +77,18 @@ public class Java1 {
                 case "4":
                     showDebt(thisUser);
                     break;
+                case "5":
+                    showRooms(thisUser, rooms, systemTime);
+                    break;
+                case "6":
+                    yourRooms(thisUser);
+                    break;
                 default:
                     System.out.println("Unrecognized command");
             }
         }
         
-        updateFile(users, "read.txt");
+        updateFile(users, "read.txt",rooms, "rooms.txt");
         
     }
     
@@ -103,7 +116,7 @@ public class Java1 {
         return Collections.emptyList();
     }
     
-    public static void updateFile(List<User> users, String file) {
+    public static void updateFile(List<User> users, String file,List<Rooms> rooms, String roomFile) {
         try {
             FileWriter w = new FileWriter(new File(file), false);
             for (User user : users) {
@@ -114,6 +127,21 @@ public class Java1 {
         } catch (Exception e) {
             System.out.println("file not found");
         }
+        
+        try{
+            FileWriter w1= new FileWriter(new File(roomFile), false);
+            for(Rooms room : rooms)
+            {
+                
+                w1.write(room.toString());
+                w1.write(System.getProperty( "line.separator" ));
+                System.out.println("BABA");
+            }
+            w1.close();
+        }   catch(Exception e)
+                    {
+                        System.out.println("file not found");
+                    }
     }
 
     private static void addBook(User thisUser, List<Book> books) {
@@ -135,7 +163,7 @@ public class Java1 {
         }
     }
 
-    private static List<Book> readBooks(String file) {
+    public static List<Book> readBooks(String file) {
         try
         {
             List<Book> books = new ArrayList<>();
@@ -198,9 +226,80 @@ public class Java1 {
                 System.out.println("Unrecognized command");
         }
     }
-
+   
     private static void showDebt(User thisUser) {
         System.out.println("Your debt is: " + thisUser.getPrice());
+    }
+    
+    
+    public static List<Rooms> readRooms(String file) {
+        try
+        {
+            List<Rooms> rooms = new ArrayList<>();
+            Scanner s = new Scanner(new File(file));
+            while(s.hasNextLine())
+            {
+                rooms.add(new Rooms(s.nextLine()));
+            }
+
+            return rooms;
+        }
+        catch(FileNotFoundException e)
+        {
+            System.out.println("file not found");
+            
+        }
+        
+        return Collections.emptyList();
+    }
+    
+    private static void showRooms(User thisUser, List<Rooms> rooms, Date systemTime)
+    {
+
+        System.out.println("Available rooms:");
+        int roomCode = 0;
+        for (Rooms room : rooms) {
+            System.out.println(roomCode + " " + room.getRoomName() + " " + room.getStatus() + " " + room.getTakenUntil());
+            roomCode++;
+        }
+        
+        System.out.println("Enter the number of the room you want to take");
+        Scanner inputScan = new Scanner(System.in);
+        String input = inputScan.next();
+        int num = Integer.parseInt(input);
+        if (num >= rooms.size())
+            System.out.println("No such room");
+        else {
+            System.out.println(rooms.get(num).getStatus());
+            if(rooms.get(num).getStatus().equals("Not Taken: "))
+            {
+               System.out.println("Enter the number of days you want to have the room");
+                Scanner inputDays = new Scanner(System.in);
+                String inputD = inputDays.next();
+                int days = Integer.parseInt(inputD);
+                rooms.get(num).setStatus("Taken until: ");
+                
+                thisUser.addRoom(rooms.get(num), days);
+            }
+            else{
+                System.out.println("This room is already taken, please choose another room");
+            }
+            
+        }
+    }
+    
+    private static void yourRooms(User thisUser)
+    {
+        System.out.println("Rooms you have reserved:");
+        int roomCode = 0;
+        for (TakenRoom room : thisUser.getRoom()) {
+            System.out.println(roomCode + " " + room.getRoomNo() + " " + room.getTakenUntil());
+            roomCode++;
+        }
+        if(roomCode == 0)
+        {
+            System.out.println("You have no rooms reserved");
+        }
     }
     
 }

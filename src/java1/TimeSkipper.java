@@ -25,6 +25,11 @@ public class TimeSkipper {
         cal.setTime(time);
     }
     
+    public Date getTime()
+    {
+        return time;
+    }
+    
     public void setToNow() {
         this.time = new Date();
     }
@@ -51,11 +56,12 @@ public class TimeSkipper {
     }
     
     public int getSkipNumber(String param) {
-        System.out.println("Enter the desired number of " + param);
+        //System.out.println("Enter the desired number of " + param);
         
-        Scanner inputScan = new Scanner(System.in);
-        String input = inputScan.next();
+        //Scanner inputScan = new Scanner(System.in);
+        //String input = inputScan.next();
         
-        return Integer.parseInt(input);
+        //return Integer.parseInt(input);
+        return 1;
     }
 }
